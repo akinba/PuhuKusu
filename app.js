@@ -17,14 +17,53 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
-var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/edremit");
+var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
+var bina= db.define('bina',
+{
+	gid: {
+		type: sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true
+	},
+	bina_adi: {
+		type: sequelize.STRING
+	},
+	geom: {
+		type: sequelize.GEOMETRY('POLYGONZ',4326)
+	}
+},
+{
+	freezeTableName: true
+});
+db.sync({force: false});
+
+bina.findOrCreate(
+{
+	where: {
+		gid: 2
+	},
+	defaults: {
+		bina_adi: 'test',
+		geom: {
+			type: 'POLYGON',
+			coordinates: [
+				[0,0],
+				[100,0],
+				[100,100],
+				[0,0]
+			],
+			crs: {type: 'name', properties: {name: 'EPSG:4326'}}
+		}
+	}
+}).spread((bina,created)=>{});
 
 app.get('/',(req,res)=>{
 	res.render('index');
 });
 
+//app.post('/:katman:gid')
+
 
 server.listen( port, ()=>{
 	console.log(`Sunucu ${port}'de calisiyor`  );
-	//console.log(db.Sequelize);
 });
