@@ -4,9 +4,11 @@
 	<title>Puhu Kuşu</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.0.1/ol.css" />
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.0.1/ol.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwedtbCae-frsVDz_I7N0lH5n78FE_bG8"></script>
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -19,14 +21,35 @@
 
 <% include ./parts/menu %>
 <% include ./parts/layermenu %>
+
+
+
 <div id="map"></div>
 
 
 <script type="text/javascript">
-	var map = new google.maps.Map($("#map")[0], {
-		center: {lat:41.015137, lng:28.979530},
-		zoom:10
-	});
+  var map = new ol.Map({
+    target: 'map',
+    projection: 'EPSG:4326',
+    layers: [
+	    new ol.layer.Tile({
+	    	source: new ol.source.OSM()
+	    }),
+	    new ol.layer.Vector({
+	    	source: new ol.source.Vector({
+	    		features: (new ol.format.GeoJSON()).readFeatures(<%- JSON.stringify(data) %>),
+	    		style: new ol.style.Style({
+	    			color: 'blue',
+	    			width: 1
+	    		})
+	    	})
+	    })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([26.96, 39.59]),
+      zoom: 15
+    })
+  });
 </script>
 
 </body>

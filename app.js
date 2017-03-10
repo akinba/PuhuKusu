@@ -17,7 +17,7 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
-var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
+var db = new sequelize("postgres://postgres:pi@31.206.235.87:5432/puhu");
 var bina= db.define('bina',
 {
 	gid: {
@@ -46,19 +46,30 @@ bina.findOrCreate(
 		bina_adi: 'test',
 		geom: {
 			type: 'POLYGON',
-			coordinates: [
-				[0,0],
-				[100,0],
-				[100,100],
-				[0,0]
-			],
+			coordinates: [[100.0, 0.0], [101.0, 0.0], [101.0, 1.0],[100.0, 1.0], [100.0, 0.0]],
 			crs: {type: 'name', properties: {name: 'EPSG:4326'}}
 		}
 	}
 }).spread((bina,created)=>{});
 
 app.get('/',(req,res)=>{
-	res.render('index');
+	db.query("select json_build_object(\
+				'type','FeatureCollection',\
+				'features', json_agg(\
+				json_build_object(\
+				'type', 'Feature',\
+				'properties', json_build_object(\
+				'gid', gid,\
+				'bina_adi', bina_adi\
+				) :: JSON,\
+				'geometry', st_asgeojson(geom) :: JSON)\
+				)\
+				) from bina",
+	{type: sequelize.QueryTypes.SELECT}
+	).then((data)=>{
+		console.log(data[0].json_build_object);
+		res.render('index', {data: data[0].json_build_object});
+	});
 });
 
 //app.post('/:katman:gid')
