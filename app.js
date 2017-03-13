@@ -18,9 +18,9 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 if (os.hostname()=='raspi') {
-	var db = new sequelize("postgres://postgres:pi@localhost:5432/edremit");
+	var db = new sequelize("postgres://postgres:pi@localhost:5432/puhu");
 } else {
-	var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/edremit");
+	var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
 }
 
 var bina= db.define('bina',
