@@ -17,7 +17,7 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
-var db = new sequelize("postgres://postgres:pi@31.206.235.87:5432/puhu");
+var db = new sequelize("postgres://postgres:pi@localhost:5432/puhu");
 var bina= db.define('bina',
 {
 	gid: {
