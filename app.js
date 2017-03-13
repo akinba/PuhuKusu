@@ -6,7 +6,7 @@ const sequelize = require("sequelize");
 const morgan	= require("morgan");
 const socketIO	= require("socket.io");
 const http		= require("http");
-var port=process.env.PORT||3005;
+var port=process.env.PORT||3006;
 
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: true}));
@@ -17,7 +17,7 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
-var db = new sequelize("postgres://postgres:pi@localhost:5432/puhu");
+var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
 var bina= db.define('bina',
 {
 	gid: {
@@ -29,7 +29,7 @@ var bina= db.define('bina',
 		type: sequelize.STRING
 	},
 	geom: {
-		type: sequelize.GEOMETRY('POLYGONZ',4326)
+		type: sequelize.GEOMETRY('POLYGON',4326)
 	}
 },
 {
