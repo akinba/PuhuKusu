@@ -37,12 +37,14 @@
 	    new ol.layer.Vector({
 	    	projection: 'EPSG:4326',
 	    	source: new ol.source.Vector({
-	    		features: (new ol.format.GeoJSON()).readFeatures(<%- JSON.stringify(data) %>),
-	    		style: new ol.style.Style({
-	    			color: 'blue',
-	    			width: 1
-	    		})
-	    	})
+	    		features: (new ol.format.GeoJSON()).readFeatures(<%- JSON.stringify(data) %>)
+	    	}),
+	    	style : new ol.style.Style({
+    			stroke: new ol.style.Stroke({
+    				color: 'red',
+    				width: 2
+    			})
+    		})
 	    })
     ],
     view: new ol.View({
