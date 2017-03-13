@@ -49,8 +49,17 @@
     	projection: 'EPSG:4326',
      	center: [26.96,39.59], //ol.proj.fromLonLat([26.96, 39.59]),
      	zoom: 15
-    })
+    }),
+    eventListeners: {
+    	featureover: function(e) {
+    		e.feature.renderIntent = "select";
+    	}
+    }
   });
+  map.addInteraction (new ol.interaction.Draw({
+  	source: new ol.source.Vector({}),
+  	type: "Polygon"
+  }));
 </script>
 
 </body>
