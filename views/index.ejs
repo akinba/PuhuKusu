@@ -30,12 +30,12 @@
 <script type="text/javascript">
   var map = new ol.Map({
     target: 'map',
-    projection: 'EPSG:4326',
     layers: [
 	    new ol.layer.Tile({
 	    	source: new ol.source.OSM()
 	    }),
 	    new ol.layer.Vector({
+	    	projection: 'EPSG:4326',
 	    	source: new ol.source.Vector({
 	    		features: (new ol.format.GeoJSON()).readFeatures(<%- JSON.stringify(data) %>),
 	    		style: new ol.style.Style({
@@ -46,8 +46,9 @@
 	    })
     ],
     view: new ol.View({
-      center: ol.proj.fromLonLat([26.96, 39.59]),
-      zoom: 15
+    	projection: 'EPSG:4326',
+     	center: [26.96,39.59], //ol.proj.fromLonLat([26.96, 39.59]),
+     	zoom: 15
     })
   });
 </script>
