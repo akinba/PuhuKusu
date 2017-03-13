@@ -5,6 +5,7 @@ const pg		= require("pg");
 const sequelize = require("sequelize");
 const morgan	= require("morgan");
 const socketIO	= require("socket.io");
+const os 		= require("os");
 const http		= require("http");
 var port=process.env.PORT||3005;
 
@@ -16,8 +17,12 @@ app.use(express.static('static'));
 
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
+if (os.hostname()=='raspi') {
+	var db = new sequelize("postgres://postgres:pi@localhost:5432/edremit");
+} else {
+	var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/edremit");
+}
 
-var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/edremit");
 var bina= db.define('bina',
 {
 	gid: {
