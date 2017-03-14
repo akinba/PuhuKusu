@@ -65,8 +65,17 @@ db.sync({force: false});
 		}
 	}
 }).spread((bina,created)=>{});*/
-bina.findAll({where:["gid<?",10] }).then((data)=>{
-	console.log(data);
+bina.all({
+	attributes: ['gid','bina_adi',['geom','geometry']],
+	limit: 2 }).then((rows)=>{
+	console.log(rows[0].$options.attributes);
+	//console.log(rows[0].dataValues);
+	var binaGJ={"type":"FeatureCollection","features":[]};
+	rows.forEach((row)=>{
+		console.log(row.dataValues);
+		binaGJ.features.push(row.dataValues);
+	})
+	console.log(binaGJ);
 });
 
 app.get('/',(req,res)=>{
