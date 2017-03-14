@@ -17,11 +17,14 @@ app.use(express.static('static'));
 
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
+
+//Database connection
 if (os.hostname()=='raspi') {
 	var db = new sequelize("postgres://postgres:pi@localhost:5432/puhu");
 } else {
 	var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
 }
+tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
 
 var bina= db.define('bina',
 {
@@ -42,7 +45,7 @@ var bina= db.define('bina',
 });
 db.sync({force: false});
 
-bina.findOrCreate(
+/*bina.findOrCreate(
 {
 	where: {
 		gid: 3
@@ -61,19 +64,10 @@ bina.findOrCreate(
 			crs: {type: 'name', properties: {name: 'EPSG:4326'}}
 		}
 	}
-}).spread((bina,created)=>{});
-
-/*bina.create({bina_adi: 'test', geom: { type: 'Polygon', coordinates: [
-			[[26.9668150773239,39.5980355463212],
-			[26.9669486288099,39.5980339361376],
-			[26.9669409282849,39.597970679018],
-			[26.9668196798476,39.5979788857023],
-			[26.9668150773239,39.5980355463212]]
-                ],
-            	crs: { type: 'name', properties: { name: 'EPSG:4326'}}}
-            }).then((ress)=>{
-            	console.log(ress);
-            });*/
+}).spread((bina,created)=>{});*/
+bina.findAll({where:["gid<?",10] }).then((data)=>{
+	console.log(data);
+});
 
 app.get('/',(req,res)=>{
 	db.query("select json_build_object(\
@@ -86,11 +80,11 @@ app.get('/',(req,res)=>{
 				) :: JSON,\
 				'geometry', st_asgeojson(geom) :: JSON)\
 				)\
-				) from bina where gid<500",
+				) from bina where gid<200",
 	{type: sequelize.QueryTypes.SELECT}
 	).then((data)=>{
 		console.log(data[0].json_build_object);
-		res.render('index', {data: data[0].json_build_object});
+		res.render('index', {data: data[0].json_build_object, tables: tables});
 	});
 });
 
