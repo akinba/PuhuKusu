@@ -43,6 +43,27 @@ var bina= db.define('bina',
 {
 	freezeTableName: true
 });
+
+var Bina2= db.define('bina2',
+{
+	gid:{
+		type: sequelize.INTEGER,
+		primaryKey: true,
+		autoIncrement: true
+	},
+	properties:{
+		type: sequelize.JSON
+	},
+	geometry: {
+		type: sequelize.GEOMETRY('Polygon',4326)
+	},
+	status: {
+		type: sequelize.ENUM,
+		values: ['active','deleted']
+	},
+},{
+	freezeTableName: true
+});
 db.sync({force: false});
 
 /*bina.findOrCreate(
@@ -65,37 +86,41 @@ db.sync({force: false});
 		}
 	}
 }).spread((bina,created)=>{});*/
-bina.all({
-	attributes: ['gid','bina_adi',['geom','geometry']],
-	limit: 2 }).then((rows)=>{
-	console.log(rows[0].$options.attributes);
-	//console.log(rows[0].dataValues);
-	var binaGJ={"type":"FeatureCollection","features":[]};
-	rows.forEach((row)=>{
-		console.log(row.dataValues);
-		binaGJ.features.push(row.dataValues);
-	})
-	console.log(binaGJ);
-});
-
 app.get('/',(req,res)=>{
-	db.query("select json_build_object(\
-				'type','FeatureCollection',\
-				'features', json_agg(\
-				json_build_object(\
-				'type', 'Feature',\
-				'properties', json_build_object(\
-				'gid', gid \
-				) :: JSON,\
-				'geometry', st_asgeojson(geom) :: JSON)\
-				)\
-				) from bina where gid<200",
-	{type: sequelize.QueryTypes.SELECT}
-	).then((data)=>{
-		console.log(data[0].json_build_object);
-		res.render('index', {data: data[0].json_build_object, tables: tables});
+	bina.all({
+		attributes: ['type',['geom','geometry'],'gid','bina_adi'],
+		limit: 20 }).then((rows)=>{
+		console.log(rows[0].$options.attributes);
+		//console.log(rows[0].dataValues);
+		var binaGJ={"type":"FeatureCollection","features":[]};
+		rows.forEach((row)=>{
+			console.log(row.dataValues);
+			binaGJ.features.push(row.dataValues);
+		});
+		console.log(binaGJ);
+		res.render('index',{data: binaGJ, tables: rows[0].$options.attributes});
 	});
 });
+
+
+// app.get('/',(req,res)=>{
+// 	db.query("select json_build_object(\
+// 				'type','FeatureCollection',\
+// 				'features', json_agg(\
+// 				json_build_object(\
+// 				'type', 'Feature',\
+// 				'properties', json_build_object(\
+// 				'gid', gid \
+// 				) :: JSON,\
+// 				'geometry', st_asgeojson(geom) :: JSON)\
+// 				)\
+// 				) from bina where gid<200",
+// 	{type: sequelize.QueryTypes.SELECT}
+// 	).then((data)=>{
+// 		console.log(data[0].json_build_object);
+// 		res.render('index', {data: data[0].json_build_object, tables: tables});
+// 	});
+// });
 
 //app.post('/:katman:gid')
 
