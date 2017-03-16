@@ -26,7 +26,7 @@ if (os.hostname()=='raspi') {
 }
 tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
 
-var bina= db.define('bina',
+/*var bina= db.define('bina',
 {
 	gid: {
 		type: sequelize.INTEGER,
@@ -43,13 +43,17 @@ var bina= db.define('bina',
 {
 	freezeTableName: true
 });
-
-var Bina2= db.define('bina2',
+*/
+var Bina= db.define('bina',
 {
 	gid:{
 		type: sequelize.INTEGER,
 		primaryKey: true,
 		autoIncrement: true
+	},
+	type:{
+		type: sequelize.STRING(10),
+		defaultValue: 'Feature'
 	},
 	properties:{
 		type: sequelize.JSON
@@ -87,7 +91,7 @@ db.sync({force: false});
 	}
 }).spread((bina,created)=>{});*/
 app.get('/',(req,res)=>{
-	bina.all({
+	Bina.all({
 		attributes: ['type',['geom','geometry'],'gid','bina_adi'],
 		limit: 20 }).then((rows)=>{
 		console.log(rows[0].$options.attributes);
