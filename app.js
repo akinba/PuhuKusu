@@ -92,13 +92,13 @@ db.sync({force: false});
 }).spread((bina,created)=>{});*/
 app.get('/',(req,res)=>{
 	Bina.all({
-		attributes: ['type',['geom','geometry'],'gid','bina_adi'],
+		attributes: ['type','gid','properties', 'geometry'],
 		limit: 20 }).then((rows)=>{
 		console.log(rows[0].$options.attributes);
 		//console.log(rows[0].dataValues);
 		var binaGJ={"type":"FeatureCollection","features":[]};
 		rows.forEach((row)=>{
-			console.log(row.dataValues);
+			//console.log(row.dataValues);
 			binaGJ.features.push(row.dataValues);
 		});
 		console.log(binaGJ);
