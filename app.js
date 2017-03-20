@@ -1,13 +1,16 @@
 const express	= require("express");
 const app		= express();
 const bodyparser = require("body-parser");
-const pg		= require("pg");
-const sequelize = require("sequelize");
+//const pg		= require("pg");
+//const sequelize = require("sequelize");
 const morgan	= require("morgan");
 const socketIO	= require("socket.io");
-const os 		= require("os");
+//const os 		= require("os");
 const http		= require("http");
+var tables			= require("./models");
 var port=process.env.PORT||3005;
+
+console.log(tables);
 
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: true}));
@@ -18,12 +21,7 @@ app.use(express.static('static'));
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
-//Database connection
-if (os.hostname()=='raspi') {
-	var db = new sequelize("postgres://postgres:pi@localhost:5432/puhu");
-} else {
-	var db = new sequelize("postgres://postgres:pi@www.akinba.com:5432/puhu");
-}
+
 tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
 
 /*var bina= db.define('bina',
@@ -44,31 +42,7 @@ tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point",
 	freezeTableName: true
 });
 */
-var Bina= db.define('bina',
-{
-	gid:{
-		type: sequelize.INTEGER,
-		primaryKey: true,
-		autoIncrement: true
-	},
-	type:{
-		type: sequelize.STRING(10),
-		defaultValue: 'Feature'
-	},
-	properties:{
-		type: sequelize.JSON
-	},
-	geometry: {
-		type: sequelize.GEOMETRY('Polygon',4326)
-	},
-	status: {
-		type: sequelize.ENUM,
-		values: ['active','deleted']
-	},
-},{
-	freezeTableName: true
-});
-db.sync({force: false});
+
 
 /*bina.findOrCreate(
 {
