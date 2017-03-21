@@ -1,16 +1,13 @@
 const express	= require("express");
 const app		= express();
 const bodyparser = require("body-parser");
-//const pg		= require("pg");
-//const sequelize = require("sequelize");
 const morgan	= require("morgan");
 const socketIO	= require("socket.io");
-//const os 		= require("os");
 const http		= require("http");
-var tables			= require("./models");
+//var tables		= require("./models");
 var port=process.env.PORT||3005;
 
-console.log(tables);
+//console.log(tables.Bina.attributes);
 
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: true}));
@@ -18,55 +15,21 @@ app.use(bodyparser.json());
 app.set("view engine", "ejs");
 app.use(express.static('static'));
 
+app.set('models', require('./models'));
+var tables= app.get('models');
+console.log(tables.Bina.attributes);
+
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
 
-tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
-
-/*var bina= db.define('bina',
-{
-	gid: {
-		type: sequelize.INTEGER,
-		primaryKey: true,
-		autoIncrement: true
-	},
-	bina_adi: {
-		type: sequelize.STRING
-	},
-	geom: {
-		type: sequelize.GEOMETRY('Polygon',4326)
-	}
-},
-{
-	freezeTableName: true
-});
-*/
+//tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
 
 
-/*bina.findOrCreate(
-{
-	where: {
-		gid: 3
-	},
-	defaults: {
-		bina_adi: 'test',
-		geom: {
-			type: 'Polygon',
-			coordinates: [
-				[[26.9668150773239,39.5980355463212],
-				[26.9669486288099,39.5980339361376],
-				[26.9669409282849,39.597970679018],
-				[26.9668196798476,39.5979788857023],
-				[26.9668150773239,39.5980355463212]]
-			],
-			crs: {type: 'name', properties: {name: 'EPSG:4326'}}
-		}
-	}
-}).spread((bina,created)=>{});*/
 app.get('/',(req,res)=>{
-	Bina.all({
-		attributes: ['type','gid','properties', 'geometry'],
+	//tables.forEach
+	tables.Bina.all({
+		//attributes: ['type','gid','properties', 'geometry'],
 		limit: 20 }).then((rows)=>{
 		console.log(rows[0].$options.attributes);
 		//console.log(rows[0].dataValues);

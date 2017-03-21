@@ -1,5 +1,5 @@
 module.exports = (db,sequelize)=>{
-var Bina= db.define('bina',
+var Kapi= db.define('kapi',
 {
 	gid:{
 		type: sequelize.INTEGER,
@@ -18,11 +18,12 @@ var Bina= db.define('bina',
 	},
 	status: {
 		type: sequelize.ENUM,
-		values: ['active','deleted']
+		values: ['active','deleted'],
+		defaultValue: 'Feature'
 	},
 },{
 	freezeTableName: true
 });
 
-return Bina;
+return Kapi;
 };
