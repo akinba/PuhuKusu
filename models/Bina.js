@@ -18,7 +18,8 @@ var Bina= db.define('bina',
 	},
 	status: {
 		type: sequelize.ENUM,
-		values: ['active','deleted']
+		values: ['active','deleted'],
+		defaultValue: 'active'
 	},
 },{
 	freezeTableName: true

@@ -17,7 +17,9 @@ app.use(express.static('static'));
 
 app.set('models', require('./models'));
 var tables= app.get('models');
-console.log(tables.Bina.attributes);
+var Bina= tables.Bina;
+console.log(Bina.findOne());
+
 
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
@@ -44,26 +46,15 @@ app.get('/',(req,res)=>{
 });
 
 
-// app.get('/',(req,res)=>{
-// 	db.query("select json_build_object(\
-// 				'type','FeatureCollection',\
-// 				'features', json_agg(\
-// 				json_build_object(\
-// 				'type', 'Feature',\
-// 				'properties', json_build_object(\
-// 				'gid', gid \
-// 				) :: JSON,\
-// 				'geometry', st_asgeojson(geom) :: JSON)\
-// 				)\
-// 				) from bina where gid<200",
-// 	{type: sequelize.QueryTypes.SELECT}
-// 	).then((data)=>{
-// 		console.log(data[0].json_build_object);
-// 		res.render('index', {data: data[0].json_build_object, tables: tables});
-// 	});
-// });
 
-//app.post('/:katman:gid')
+
+app.get('/test/:katman',(req,res)=>{
+	res.send(req.params.katman);
+
+	// (req.params.katman).all({limit: 1}).then((data)=>{
+	// 	console.log(data);
+	// });
+});
 
 
 server.listen( port, ()=>{

@@ -10,7 +10,7 @@ if (os.hostname()=='raspi') {
 }
 
 
-var models = [ 'Bina'];
+var models = [ 'Bina', 'Kapi'];
 
 models.forEach((model)=>{
 	module.exports[model] = db.import(__dirname + '/' + model);

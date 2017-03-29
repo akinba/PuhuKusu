@@ -19,7 +19,7 @@ var Kapi= db.define('kapi',
 	status: {
 		type: sequelize.ENUM,
 		values: ['active','deleted'],
-		defaultValue: 'Feature'
+		defaultValue: 'active'
 	},
 },{
 	freezeTableName: true
