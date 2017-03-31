@@ -56,7 +56,7 @@
 	],
     view: new ol.View({
     	projection: 'EPSG:4326',
-     	center: [26.96,39.59], //ol.proj.fromLonLat([26.96, 39.59]),
+     	center: [29.06,40.97], //ol.proj.fromLonLat([26.96, 39.59]),
      	zoom: 15
     }),
     eventListeners: {
@@ -69,7 +69,13 @@
 		source: new ol.source.Vector({}),
 		type: "Point"
 	}));
-</script>
 
+</script>
+<script type="text/javascript">
+	var socket=io();
+	map.on("moveend",function(){
+		socket.emit('geoData', {data: map.getView().calculateExtent()});
+	});
+</script>
 </body>
 </html>

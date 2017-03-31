@@ -18,7 +18,7 @@ app.use(express.static('static'));
 app.set('models', require('./models'));
 var tables= app.get('models');
 var Bina= tables.Bina;
-console.log(Bina.findOne());
+//console.log(Bina.findOne());
 
 
 var server 	= http.createServer(app);
@@ -31,8 +31,14 @@ var io 		= socketIO(server);
 app.get('/',(req,res)=>{
 	//tables.forEach
 	tables.Bina.all({
-		//attributes: ['type','gid','properties', 'geometry'],
-		limit: 20 }).then((rows)=>{
+		limit: 10/*,
+		where: {
+			geometry: {$contains: { 
+				type: 'Point',
+			 	coordinates: [29.060000000000002,40.964034767150885]}
+			}
+		}*/
+	}).then((rows)=>{
 		console.log(rows[0].$options.attributes);
 		//console.log(rows[0].dataValues);
 		var binaGJ={"type":"FeatureCollection","features":[]};
@@ -45,9 +51,6 @@ app.get('/',(req,res)=>{
 	});
 });
 
-
-
-
 app.get('/test/:katman',(req,res)=>{
 	res.send(req.params.katman);
 
@@ -56,6 +59,12 @@ app.get('/test/:katman',(req,res)=>{
 	// });
 });
 
+io.on('connection',(socket)=>{
+	console.log(`${socket.id} connected`);
+	socket.on('geoData',(data)=>{
+		console.log(data.data);
+	});
+});
 
 server.listen( port, ()=>{
 	console.log(`Sunucu ${port}'de calisiyor`  );
