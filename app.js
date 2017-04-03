@@ -18,26 +18,22 @@ app.use(express.static('static'));
 app.set('models', require('./models'));
 var tables= app.get('models');
 var Bina= tables.Bina;
-//console.log(Bina.findOne());
+//console.log(Bina.sequelize);
 
 
 var server 	= http.createServer(app);
 var io 		= socketIO(server);
 
 
-//tables = [{name: "bina", type:"Polygon", srid:4326},{name: "kapi", type:"Point", srid:4326}]
-
 
 app.get('/',(req,res)=>{
 	//tables.forEach
-	tables.Bina.all({
-		limit: 10/*,
-		where: {
-			geometry: {$contains: { 
-				type: 'Point',
-			 	coordinates: [29.060000000000002,40.964034767150885]}
-			}
-		}*/
+	tables.Bina.findAll({
+		limit: 10,
+		where: [
+			Bina.sequelize.fn('ST_CONTAINS',Bina.sequelize.literal('geometry'),Bina.sequelize.literal('ST_MakePoint(-126.4, 45.32)'))
+			]
+		
 	}).then((rows)=>{
 		console.log(rows[0].$options.attributes);
 		//console.log(rows[0].dataValues);
