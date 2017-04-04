@@ -33,7 +33,10 @@
 		var <%=table.name%> ;
 	<%});%>
 */
-
+	//var binaFeatures = new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>);
+	var binaSource = new ol.source.Vector({
+		//features: binaFeatures
+	});
 	var map = new ol.Map({
 	target: 'map',
 	layers: [
@@ -42,9 +45,7 @@
 	    }),
 	    bina= new ol.layer.Vector({
 	    	projection: 'EPSG:4326',
-	    	source: new ol.source.Vector({
-	    		features: (new ol.format.GeoJSON()).readFeatures(<%- JSON.stringify(data) %>)
-	    	}),
+	    	source: binaSource,
 	    	style : new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: 'red',
@@ -65,17 +66,22 @@
     	}
     }
 	});
-	map.addInteraction (new ol.interaction.Draw({
-		source: new ol.source.Vector({}),
-		type: "Point"
-	}));
+	// map.addInteraction (new ol.interaction.Draw({
+	// 	source: new ol.source.Vector({}),
+	// 	type: "Point"
+	// }));
 
 </script>
 <script type="text/javascript">
 	var socket=io();
 	map.on("moveend",function(){
-		socket.emit('geoData', {data: map.getView().calculateExtent()});
+		socket.emit('bbox', map.getView().calculateExtent());
 	});
+			socket.on('layerBina', function(data){
+			console.log('layerBina',<%- JSON.stringify(data) %>);
+			//binaFeatures=new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>);
+			// binaSource.addFeatures(new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>));
+		});
 </script>
 </body>
 </html>

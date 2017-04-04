@@ -18,20 +18,7 @@ app.use(express.static('static'));
 app.set('models', require('./models'));
 var tables= app.get('models');
 var Bina= tables.Bina;
-Bina.findAll({
-	limit:1,
-	where: {
-		geometry: {
-			$overlap: Bina.sequelize.fn('ST_MakeEnvelope', 
-				29.039443550109862,
-				40.9504949760437,
-				29.080556449890135,
-				40.9895050239563)
-		}
-	}
-}).then((data)=>{
-	console.log(data);
-});
+
 
 
 var server 	= http.createServer(app);
@@ -42,11 +29,7 @@ var io 		= socketIO(server);
 app.get('/',(req,res)=>{
 	//tables.forEach
 	tables.Bina.findAll({
-		limit: 10/*,
-		where: [
-			Bina.sequelize.fn('ST_CONTAINS',Bina.sequelize.literal('geometry'),Bina.sequelize.literal('ST_MakePoint(-126.4, 45.32)'))
-			]
-		*/
+		limit: 20
 	}).then((rows)=>{
 		console.log(rows[0].$options.attributes);
 		//console.log(rows[0].dataValues);
@@ -70,8 +53,27 @@ app.get('/test/:katman',(req,res)=>{
 
 io.on('connection',(socket)=>{
 	console.log(`${socket.id} connected`);
-	socket.on('geoData',(data)=>{
-		console.log(data.data);
+	socket.on('bbox',(data)=>{
+		console.log(data);
+		Bina.findAll({
+			//limit:1,
+			where: {
+				geometry: {
+					$overlap: Bina.sequelize.fn('ST_MakeEnvelope', 
+						data[0],
+						data[1],
+						data[2],
+						data[3])
+				}
+			}
+		}).then((rows)=>{
+			console.log(rows);
+			var binaGJ={"type":"FeatureCollection","features":[]};
+			rows.forEach((row)=>{
+				binaGJ.features.push(row.dataValues);
+			});
+			io./*sockets.sockets[socket.id].*/emit('layerBina', binaGJ);
+		});
 	});
 });
 
