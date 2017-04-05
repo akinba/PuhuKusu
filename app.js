@@ -39,7 +39,7 @@ app.get('/',(req,res)=>{
 			binaGJ.features.push(row.dataValues);
 		});
 		console.log(binaGJ);
-		res.render('index',{data: binaGJ, tables: rows[0].$options.attributes});
+		res.render('index'/*,{data: binaGJ, tables: rows[0].$options.attributes}*/);
 	});
 });
 
@@ -72,7 +72,7 @@ io.on('connection',(socket)=>{
 			rows.forEach((row)=>{
 				binaGJ.features.push(row.dataValues);
 			});
-			io./*sockets.sockets[socket.id].*/emit('layerBina', binaGJ);
+			io.sockets.sockets[socket.id].emit('layerBina', binaGJ);
 		});
 	});
 });

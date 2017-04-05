@@ -28,14 +28,9 @@
 
 
 <script type="text/javascript">
-	var basemap,bina,nokta;
-/*	<%tables.forEach(function(table){%>
-		var <%=table.name%> ;
-	<%});%>
-*/
-	//var binaFeatures = new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>);
+	var binaFeatures = new ol.Feature({});
 	var binaSource = new ol.source.Vector({
-		//features: binaFeatures
+		features: binaFeatures
 	});
 	var map = new ol.Map({
 	target: 'map',
@@ -58,7 +53,7 @@
     view: new ol.View({
     	projection: 'EPSG:4326',
      	center: [29.06,40.97], //ol.proj.fromLonLat([26.96, 39.59]),
-     	zoom: 15
+     	zoom: 18
     }),
     eventListeners: {
     	featureover: function(e) {
@@ -77,11 +72,13 @@
 	map.on("moveend",function(){
 		socket.emit('bbox', map.getView().calculateExtent());
 	});
-			socket.on('layerBina', function(data){
-			console.log('layerBina',<%- JSON.stringify(data) %>);
-			//binaFeatures=new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>);
-			// binaSource.addFeatures(new ol.format.GeoJSON().readFeatures(<%- JSON.stringify(data) %>));
-		});
+
+	socket.on('layerBina', function(data){
+	//console.log(data );
+	binaFeatures=new ol.format.GeoJSON().readFeatures(data);
+	binaSource.clear();
+	binaSource.addFeatures(binaFeatures);
+	});
 </script>
 </body>
 </html>
