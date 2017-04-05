@@ -54,23 +54,15 @@
     	projection: 'EPSG:4326',
      	center: [29.06,40.97], //ol.proj.fromLonLat([26.96, 39.59]),
      	zoom: 18
-    }),
-    eventListeners: {
-    	featureover: function(e) {
-    		e.feature.renderIntent = "select";
-    	}
-    }
+    })
 	});
-	// map.addInteraction (new ol.interaction.Draw({
-	// 	source: new ol.source.Vector({}),
-	// 	type: "Point"
-	// }));
 
 </script>
 <script type="text/javascript">
 	var socket=io();
 	map.on("moveend",function(){
 		socket.emit('bbox', map.getView().calculateExtent());
+		$("#bina").find(".circle.loading.icon").addClass("notched");
 	});
 
 	socket.on('layerBina', function(data){
@@ -78,6 +70,7 @@
 	binaFeatures=new ol.format.GeoJSON().readFeatures(data);
 	binaSource.clear();
 	binaSource.addFeatures(binaFeatures);
+	$("#bina").find(".circle.loading.icon.notched").removeClass("notched");
 	});
 </script>
 </body>
