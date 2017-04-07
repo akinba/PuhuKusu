@@ -57,6 +57,12 @@
     })
 	});
 
+		select  = new ol.interaction.Select({});
+		select.on('select', function(event){
+			console.log(event.selected[0].getProperties());
+		});
+		map.addInteraction(select);
+
 </script>
 <script type="text/javascript">
 	var socket=io();
@@ -66,12 +72,14 @@
 	});
 
 	socket.on('layerBina', function(data){
-	//console.log(data );
+	console.log(data );
 	binaFeatures=new ol.format.GeoJSON().readFeatures(data);
 	binaSource.clear();
 	binaSource.addFeatures(binaFeatures);
 	$("#bina").find(".circle.loading.icon.notched").removeClass("notched");
 	});
+
+
 </script>
 </body>
 </html>
