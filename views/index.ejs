@@ -23,8 +23,18 @@
 <% include ./parts/layermenu %>
 
 
-
 <div id="map"></div>
+<div id="pop" class="ui card">
+  <div class="content">
+    <div class="header">Cute Dog</div>
+    <div class="meta">
+      <span>2 days ago</span>
+      <a>Animals</a>
+    </div>
+    <p></p>
+  </div>
+</div>
+
 
 
 <script type="text/javascript">
@@ -44,7 +54,7 @@
 	    	style : new ol.style.Style({
 				stroke: new ol.style.Stroke({
 					color: 'red',
-					width: 2
+					width: 1
 				})
 			})
 	    }),
@@ -57,11 +67,31 @@
     })
 	});
 
-		select  = new ol.interaction.Select({});
-		select.on('select', function(event){
-			console.log(event.selected[0].getProperties());
+		var select  = new ol.interaction.Select({
+			style: new ol.style.Style({
+				stroke: new ol.style.Stroke({
+					color: 'blue',
+					width: 3
+				})
+			})
 		});
+		var popup = new ol.Overlay({
+			element: $("#pop")[0],
+			positioning: 'bottom-center',
+			offset: [0,-20]
+		});
+		map.addOverlay(popup);
 		map.addInteraction(select);
+		select.on('select', function(event){
+			//console.log(event.selected[0].getProperties());
+			console.log(event.target.getFeatures());
+			//console.log(event.mapBrowserEvent.coordinate);
+			popup.setPosition(event.mapBrowserEvent.coordinate);
+
+		});
+
+
+
 
 </script>
 <script type="text/javascript">
